@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EMOTIONS {
+  GREAT
+  GOOD
+  OKAY
+  BAD
+  NOT_GREAT
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  Age       Int
+  picture   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Journal   Journal?
+}
+
+model Journal {
+  id          Int     @id @default(autoincrement())
+  belongsToId Int     @unique
+  belongsTo   User    @relation(fields: [belongsToId], references: [id])
+  entries     Entry[]
+}
+
+model Entry {
+  id        Int      @id @default(autoincrement())
+  emotion   EMOTIONS @default(OKAY)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Journal   Journal? @relation(fields: [journalId], references: [id])
+  journalId Int?
+}
